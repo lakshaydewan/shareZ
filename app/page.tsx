@@ -11,7 +11,7 @@ export default function YourComponent() {
     <div className="h-[100vh] w-full bg-neutral-900 flex flex-col justify-center items-center">
       <div className="border border-neutral-800 absolute top-0 left-0 w-full h-fit flex justify-between items-center p-4">
         <h1 className="text-3xl font-bold">shareZ</h1>
-        <a className="px-5 py-1 rounded-lg border border-neutral-700 transition-all duration-500 ease-out font-mono font-light text-sm hover:border-white bg-neutral-700 text-neutral-50" href="https://github.com/lakshaydiwan/shareZ" target="_blank" rel="noopener noreferrer">
+        <a className="px-5 py-1 rounded-lg border border-neutral-700 transition-all duration-500 ease-out font-mono font-light text-sm hover:border-white bg-neutral-700 text-neutral-50" href="https://github.com/lakshaydewan/shareZ" target="_blank" rel="noopener noreferrer">
           Github
         </a>
       </div>
