@@ -4,7 +4,7 @@ import { Copy, QrCode, Check } from "lucide-react"
 import QRCode from 'react-qr-code';
 import { ImCross } from "react-icons/im";
 
-export default function FileShare({ publicUrl, handleClose }: { publicUrl: string, handleClose: () => void }) {
+export default function FileShare({ publicUrl, handleClose, deleteTime }: { publicUrl: string, handleClose: () => void, deleteTime: string }) {
     const [copied, setCopied] = useState(false)
     const [showQRCode, setShowQRCode] = useState(false);
 
@@ -56,20 +56,7 @@ export default function FileShare({ publicUrl, handleClose }: { publicUrl: strin
                 </div>
 
                 <div className="flex items-center justify-center gap-2 text-white">
-                    <span>Your file will be deleted</span>
-                    <select className="bg-white/5 rounded-lg px-3 py-2 appearance-none">
-                        <option>in 1 hour</option>
-                        <option>in 6 hours</option>
-                        <option>in 12 hours</option>
-                        <option>in 24 hours</option>
-                    </select>
-                    <span>or after</span>
-                    <select className="bg-white/5 rounded-lg px-3 py-2 appearance-none">
-                        <option>10 downloads</option>
-                        <option>20 downloads</option>
-                        <option>50 downloads</option>
-                        <option>100 downloads</option>
-                    </select>
+                    <span className="font-sans font-light">Your file will be deleted</span><span className="font-sans font-semibold bg-zinc-900 py-1 px-3 rounded-lg">after {deleteTime}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex items-center gap-3">
@@ -78,7 +65,7 @@ export default function FileShare({ publicUrl, handleClose }: { publicUrl: strin
                         </div>
                         <div>
                             <h3 className="text-xl font-medium text-emerald-500">Encrypted</h3>
-                            <p className="text-white/70">End-to-end encrypted</p>
+                            <p className="text-white/70 text-sm">End-to-end encrypted</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -87,7 +74,7 @@ export default function FileShare({ publicUrl, handleClose }: { publicUrl: strin
                         </div>
                         <div>
                             <h3 className="text-xl font-medium text-blue-500">Uploaded</h3>
-                            <p className="text-white/70">You can close this page now</p>
+                            <p className="text-white/70 text-sm">You can close this page now</p>
                         </div>
                     </div>
                 </div>

@@ -3,9 +3,34 @@ import FileShare from "@/components/FileShare";
 import Footer from "@/components/Footer";
 import { UploadButton } from "@/utils/uploadthing";
 import { useState } from "react";
+import axios from "axios";
 
 export default function YourComponent() {
   const [publicUrl, setPublicUrl] = useState("");
+  const deleteTimeObj = {
+    min: {
+      value: 60000,
+      label: "1 min"
+    },
+    hour: {
+      value: 3600000,
+      label: "1 Hour"
+    },
+    fourHours: {
+      value: 14400000,
+      label: "4 Hours"
+    },
+    twelveHours: {
+      value: 43200000,
+      label: "12 Hours"
+    },
+    day: {
+      value: 86400000,
+      label: "1 Day"
+    }
+  }
+  const [deleteTimeLabel, setDeleteTimeLabel] = useState(deleteTimeObj.min.label);
+  const [deleteTime, setDeleteTime] = useState(deleteTimeObj.min.value);
 
   return (
     <div className="h-[100vh] w-full bg-neutral-900 flex flex-col justify-center items-center">
@@ -16,18 +41,38 @@ export default function YourComponent() {
         </a>
       </div>
       <div className="flex md:flex-row flex-col justify-center items-center rounded-2xl border border-neutral-600 lg:w-[60vw] md:w-[75vw] w-[95vw] md:mt-0 mt-5 h-[70vh] md:h-[50vh]">
-        <div className="md:w-full w-[90%] h-[90%] rounded-lg m-8 border border-neutral-600 border-dashed flex justify-center items-center">
+        <div className="md:w-full flex-col w-[90%] h-[90%] rounded-lg m-8 border border-neutral-600 border-dashed flex justify-center items-center">
           <UploadButton
             className="ut-button:bg-gradient-to-r ut-button:w-full ut-button:h-full ut-button:focus-within::outline-none ut-button:focus:ring-0 ut-button:shadow-lg transition-colors duration-500 ease-out ut-button:from-gradientStart ut-button:to-gradientEnd ut-button:text-white ut-button:font-extrabold ut-button:font-sans ut-button:tracking-wider ut-button:py-2 ut-button:px-4 ut-button:rounded-lg"
             endpoint="imageUploader"
             onClientUploadComplete={(res) => {
-              console.log("Files:", res[0].ufsUrl);
-              setPublicUrl(res[0].ufsUrl);
+              if (res) {
+                console.log("Upload complete:", res);
+                setPublicUrl(res[0].ufsUrl);
+                res.forEach(async (file) => {
+                    try {
+                      await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/file-delete`, {
+                        fileKey: file.key,
+                        deletionTime: deleteTime
+                      })
+                      console.log(`File ${file.key} deletion request sent.`);
+                    } catch (error) {
+                      console.error(`Error requesting deletion for ${file.key}:`, error);
+                    }
+                });
+              }
             }}
             onUploadError={(error) => {
               alert(`ERROR! ${error.message}`);
             }}
           />
+          <select className="text-neutral-100 cursor-pointer py-3 px-1 rounded-md bg-neutral-900 focus:outline-none focus:ring-0" onChange={(e) => setDeleteTime(Number(e.target.value))}>
+            <option onClick={() => setDeleteTimeLabel(deleteTimeObj.min.label)} value={deleteTimeObj.min.value}>{deleteTimeObj.min.label}</option>
+            <option onClick={() => setDeleteTimeLabel(deleteTimeObj.hour.label)} value={deleteTimeObj.hour.value}>{deleteTimeObj.hour.label}</option>
+            <option onClick={() => setDeleteTimeLabel(deleteTimeObj.fourHours.label)} value={deleteTimeObj.fourHours.value}>{deleteTimeObj.fourHours.label}</option>
+            <option onClick={() => setDeleteTimeLabel(deleteTimeObj.twelveHours.label)} value={deleteTimeObj.twelveHours.value}>{deleteTimeObj.twelveHours.label}</option>
+            <option onClick={() => setDeleteTimeLabel(deleteTimeObj.day.label)} value={deleteTimeObj.day.value}>{deleteTimeObj.day.label}</option>
+          </select>
         </div>
         <div className="w-full flex flex-col justify-between md:items-start items-center h-full p-3 lg:p-8">
           <div className="md:text-start text-center">
@@ -40,9 +85,9 @@ export default function YourComponent() {
         </div>
       </div>
       {publicUrl && (
-        <FileShare publicUrl={publicUrl} handleClose={()=> setPublicUrl("")} />
+        <FileShare deleteTime={deleteTimeLabel} publicUrl={publicUrl} handleClose={() => setPublicUrl("")} />
       )}
-       <Footer />
+      <Footer />
     </div>
   );
 }
