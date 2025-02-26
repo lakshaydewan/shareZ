@@ -51,10 +51,14 @@ export default function YourComponent() {
                 setPublicUrl(res[0].ufsUrl);
                 res.forEach(async (file) => {
                     try {
-                      await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/file-delete`, {
+                      const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/file-delete`, {
                         fileKey: file.key,
                         deletionTime: deleteTime
                       })
+                      console.log("File deletion response:", res);
+                      if (res.status === 200) {
+                        console.log(`File ${file.key} deleted successfully.`);
+                      }
                       console.log(`File ${file.key} deletion request sent.`);
                     } catch (error) {
                       console.error(`Error requesting deletion for ${file.key}:`, error);
